@@ -26,25 +26,31 @@ https://youtu.be/WJ9i1ZQD1EI
 - **Assets** — Gambar sampul buku dan logo aplikasi.
 
 ## 📸 Screenshot Aplikasi
+
 <img width="512" height="253" alt="image" src="https://github.com/user-attachments/assets/83c58169-53aa-47cb-aa10-0e53cd5892dd" />
 
 ### 1. Katalog Buku
 Menampilkan daftar buku dalam bentuk grid, lengkap dengan sampul, judul, penulis, harga, dan tombol tambah ke keranjang.
+
 <img width="471" height="348" alt="image" src="https://github.com/user-attachments/assets/1358bdd4-16a4-4814-bb8b-1a81abe6aa97" />
 
 ### 2. Badge Keranjang
 Menampilkan jumlah item yang terdapat di keranjang belanja.
+
 <img width="476" height="44" alt="image" src="https://github.com/user-attachments/assets/94dfa339-ce0c-4cab-b05a-95255db18f87" />
 
 ### 3. Keranjang Belanja
 Menampilkan buku yang dipilih, jumlah item, harga, serta total belanja.
+
 <img width="479" height="408" alt="image" src="https://github.com/user-attachments/assets/f611b18f-62db-410e-8add-82bf8e0e94a4" />
 
 ### 4. Light/Dark Mode
 Menampilkan tampilan aplikasi dalam tema terang dan gelap.
 Light Mode
+
 <img width="479" height="311" alt="image" src="https://github.com/user-attachments/assets/e2bd85e9-7349-49f6-95ee-ec9f8975e1a8" />
 Dark Mode 
+
 <img width="477" height="300" alt="image" src="https://github.com/user-attachments/assets/8b3dcc48-a666-473c-ac88-0afdc14edc90" />
 
 ### 5. Notifikasi Checkout
