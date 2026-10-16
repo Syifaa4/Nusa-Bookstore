@@ -46,9 +46,11 @@ Menampilkan buku yang dipilih, jumlah item, harga, serta total belanja.
 
 ### 4. Light/Dark Mode
 Menampilkan tampilan aplikasi dalam tema terang dan gelap.
+
 Light Mode
 
 <img width="479" height="311" alt="image" src="https://github.com/user-attachments/assets/e2bd85e9-7349-49f6-95ee-ec9f8975e1a8" />
+
 Dark Mode 
 
 <img width="477" height="300" alt="image" src="https://github.com/user-attachments/assets/8b3dcc48-a666-473c-ac88-0afdc14edc90" />
