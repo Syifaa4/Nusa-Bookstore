@@ -73,18 +73,26 @@ class CartScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(14),
                         child: Row(
                           children: [
-                            Container(
-                              width: 64,
-                              height: 82,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.menu_book_rounded,
-                                size: 34,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                book.imageAsset,
+                                width: 64,
+                                height: 90,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 64,
+                                    height: 90,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    child: const Icon(
+                                      Icons.menu_book_rounded,
+                                      size: 34,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             const SizedBox(width: 12),

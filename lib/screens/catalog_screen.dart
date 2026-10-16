@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -151,17 +150,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   int _quantityFor(Book book) => _selectedQuantities[book.id] ?? 1;
 
-  void _changeQuantity(Book book, int difference) {
-    final current = _quantityFor(book);
-    final next = current + difference;
-
-    if (next < 1 || next > 99) return;
-
-    setState(() {
-      _selectedQuantities[book.id] = next;
-    });
-  }
-
   void _toggleFavorite(Book book) {
     setState(() {
       if (_favorites.contains(book.id)) {
@@ -215,8 +203,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       isScrollControlled: true,
       showDragHandle: true,
       builder: (sheetContext) {
-        final isDark =
-            Theme.of(sheetContext).brightness == Brightness.dark;
+        final isDark = Theme.of(sheetContext).brightness == Brightness.dark;
 
         return StatefulBuilder(
           builder: (context, setSheetState) {
@@ -247,25 +234,16 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     children: [
                       Center(
                         child: Container(
-                          width: 88,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).dividerColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: Container(
                           width: 132,
-                          height: 164,
+                          height: 180,
+                          padding: const EdgeInsets.all(10),
+                          clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
                             color: isDark
                                 ? const Color(0xFF344454)
                                 : const Color(0xFFF1E5D2),
                             borderRadius: BorderRadius.circular(18),
-                          ),                         
+                          ),
                           child: Image.asset(
                             book.imageAsset,
                             fit: BoxFit.contain,
@@ -336,9 +314,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         children: [
                           const Text('Total harga'),
                           Text(
-                            formatRupiah(
-                              book.price * _quantityFor(book),
-                            ),
+                            formatRupiah(book.price * _quantityFor(book)),
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -477,9 +453,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     color: Colors.white.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: const Text(
-                    'KOLEKSI PILIHAN  •  4 BUKU',
-                    style: TextStyle(
+                  child: Text(
+                    'KOLEKSI PILIHAN  •  ${sampleBooks.length} BUKU',
+                    style: const TextStyle(
                       color: Color(0xFFE9B967),
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -512,19 +488,29 @@ class _CatalogScreenState extends State<CatalogScreen> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 16),
-          ...sampleBooks.map(
-            (book) => _BookCard(
-              book: book,
-              quantity: _quantityFor(book),
-              isFavorite: _favorites.contains(book.id),
-              onDecrease: () => _changeQuantity(book, -1),
-              onIncrease: () => _changeQuantity(book, 1),
-              onFavorite: () => _toggleFavorite(book),
-              onDetails: () => _showBookDetails(book),
-              onAdd: () => _addToCart(book),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: sampleBooks.length,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 260, // lebar maksimal tiap kartu
+              mainAxisExtent: 390, // tinggi tetap, tidak overflow
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
             ),
+            itemBuilder: (context, index) {
+              final book = sampleBooks[index];
+
+              return _BookCard(
+                book: book,
+                isFavorite: _favorites.contains(book.id),
+                onFavorite: () => _toggleFavorite(book),
+                onDetails: () => _showBookDetails(book),
+                onAdd: () => _addToCart(book),
+              );
+            },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
           Center(
             child: Text(
               'Temukan bacaan favoritmu di NusaBookstore',
@@ -542,20 +528,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
 class _BookCard extends StatelessWidget {
   final Book book;
-  final int quantity;
   final bool isFavorite;
-  final VoidCallback onDecrease;
-  final VoidCallback onIncrease;
   final VoidCallback onFavorite;
   final VoidCallback onDetails;
   final VoidCallback onAdd;
 
   const _BookCard({
     required this.book,
-    required this.quantity,
     required this.isFavorite,
-    required this.onDecrease,
-    required this.onIncrease,
     required this.onFavorite,
     required this.onDetails,
     required this.onAdd,
@@ -563,163 +543,146 @@ class _BookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        onTap: onDetails,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: onDetails,
-                  borderRadius: BorderRadius.circular(14),
-                  child: Container(
-                    width: 94,
-                    height: 128,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF344454)
-                          : const Color(0xFFF1E5D2),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Image.asset(
-                      book.imageAsset,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.broken_image_outlined,
-                          size: 48,
-                          color: Colors.redAccent,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: InkWell(
-                    onTap: onDetails,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            book.title,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            book.author,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            formatRupiah(book.price),
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFD18A45),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Lihat sinopsis  →',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
+            // Cover buku (mengisi sisa ruang)
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    color: isDark
+                        ? const Color(0xFF344454)
+                        : const Color(0xFFF1E5D2),
+                    padding: const EdgeInsets.all(14),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
+                      child: Image.asset(
+                        book.imageAsset,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              size: 38,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  tooltip: isFavorite
-                      ? 'Hapus dari favorit'
-                      : 'Tambahkan ke favorit',
-                  onPressed: onFavorite,
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.redAccent : null,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Jumlah',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                _QuantitySelector(
-                  quantity: quantity,
-                  onDecrease: onDecrease,
-                  onIncrease: onIncrease,
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF302B25)
-                    : const Color(0xFFFAF3E8),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Total harga',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  Flexible(
-                    child: Text(
-                      formatRupiah(book.price * quantity),
-                      textAlign: TextAlign.end,
-                      style: const TextStyle(
-                        color: Color(0xFFD18A45),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Material(
+                      color: theme.colorScheme.surface.withValues(alpha: 0.9),
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        tooltip: isFavorite
+                            ? 'Hapus dari favorit'
+                            : 'Tambahkan ke favorit',
+                        onPressed: onFavorite,
+                        iconSize: 20,
+                        constraints: const BoxConstraints(
+                          minWidth: 36,
+                          minHeight: 36,
+                        ),
+                        padding: EdgeInsets.zero,
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.redAccent : null,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: onAdd,
-                icon: const Icon(Icons.add_shopping_cart, size: 19),
-                label: const Text('Tambah ke Keranjang'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF243B53),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+
+            // Info buku (tinggi mengikuti isi, tidak overflow)
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Tinggi 2 baris dikunci agar semua kartu sejajar
+                  SizedBox(
+                    height: 38,
+                    child: Text(
+                      book.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 1.3,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    book.author,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    formatRupiah(book.price),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD18A45),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 40,
+                    child: FilledButton.icon(
+                      onPressed: onAdd,
+                      icon: const Icon(Icons.add_shopping_cart, size: 16),
+                      label: const FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          'Tambah ke Keranjang',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        backgroundColor: const Color(0xFF243B53),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -746,32 +709,21 @@ class _QuantitySelector extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          tooltip: 'Kurangi jumlah',
-          visualDensity: VisualDensity.compact,
-          constraints: const BoxConstraints(
-            minWidth: 36,
-            minHeight: 36,
-          ),
           onPressed: quantity > 1 ? onDecrease : null,
           icon: const Icon(Icons.remove_circle_outline),
+          tooltip: 'Kurangi jumlah',
         ),
-        SizedBox(
-          width: 28,
-          child: Text(
-            '$quantity',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+        Text(
+          '$quantity',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
         IconButton(
-          tooltip: 'Tambah jumlah',
-          visualDensity: VisualDensity.compact,
-          constraints: const BoxConstraints(
-            minWidth: 36,
-            minHeight: 36,
-          ),
           onPressed: quantity < 99 ? onIncrease : null,
           icon: const Icon(Icons.add_circle_outline),
+          tooltip: 'Tambah jumlah',
         ),
       ],
     );
